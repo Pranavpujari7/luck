@@ -1,0 +1,8 @@
+{
+  "name": "Quick Decode (Lucky 3)",
+  "description": "Double-tap or hold a puzzle message from the Lucky 3 bot and its Decode app runs instantly.",
+  "authors": [{ "name": "you", "id": "0" }],
+  "main": "index.js",
+  "hash": "qdh2",
+  "vendetta": { "icon": "ic_message_edit" }
+}
