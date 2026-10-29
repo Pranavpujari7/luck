@@ -3,7 +3,8 @@
 
   // ---------- settings (edit these) ----------
   const APP_NAME = "lucky 3";             // fallback name match (only used if APP_ID is empty)
-  const APP_ID = "1554103574085238834";    // bot application id (Lucky 3, the cat avatar one)
+  const APP_ID = "1554103574085238834";    // Lucky 3 (cat avatar) = the app that owns the Decode command
+  const ONLY_AUTHOR_ID = "";              // optional: the heist bot's (Paimon) user id, so only its messages trigger (empty = any bot message with image/embed)
   const COMMAND_NAME = "Decode";          // the message command name
   const HIDE_SHEET = true;                // close the long-press menu on puzzle messages
   const MODE = "both";                    // "double" = double-tap, "hold" = long-press, "both"
@@ -42,23 +43,16 @@
   const unpatches = [];
   const lastFired = {};
   let cmdCache = null;
-  let knownBotId = APP_ID || "";
+  let knownBotId = APP_ID || "";   // only used to pick the right Decode command
 
   function nonce() {
     try { return String(Snowflake.fromTimestamp(Date.now())); }
     catch (e) { return String(Date.now() - 1420070400000) + String(Math.floor(Math.random() * 1e7)); }
   }
 
-  // is this message from the target bot?
-  function fromTarget(author) {
-    if (!author || !author.bot) return false;
-    if (knownBotId) return author.id === knownBotId;
-    const n = ((author.globalName || "") + " " + (author.username || "")).toLowerCase();
-    return n.indexOf(APP_NAME) !== -1;
-  }
-
   function isPuzzle(message) {
-    if (!message || !fromTarget(message.author)) return false;
+    if (!message || !message.author || !message.author.bot) return false;
+    if (ONLY_AUTHOR_ID && message.author.id !== ONLY_AUTHOR_ID) return false;
     return ((message.embeds || []).length > 0) ||
            ((message.attachments || []).length > 0) ||
            ((message.components || []).length > 0);
